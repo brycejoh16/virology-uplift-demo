@@ -94,7 +94,7 @@ canvas{width:100%!important;height:380px!important;}
       <option value="si">Site Independent</option>
       <option value="rosetta">Rosetta ∆∆G</option>
     </select>
-    <div class="ctrl-sub" id="baseNote">Auto-selects strongest traditional model across all splits</div>
+    <div class="ctrl-sub" id="baseNote" style="font-size:.875rem;font-weight:600;color:var(--text);margin-top:.375rem;">Auto-selects strongest traditional model across all splits</div>
   </div>
   <div>
     <div class="ctrl-label">Compare against (PLM)</div>
@@ -175,8 +175,7 @@ canvas{width:100%!important;height:380px!important;}
 <tr class="row-plm"><td class="mono">12</td><td>ProSST</td><td>PLM (struct)</td><td class="mono">150M</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
 <tr class="row-plm"><td class="mono">13</td><td>ProGen3</td><td>PLM (AR)</td><td class="mono">~1B</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
 <tr class="row-plm"><td class="mono">14</td><td>PoET-2</td><td>PLM (retrieval)</td><td class="mono">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-<tr class="row-plm"><td class="mono">15</td><td>SARITA</td><td>Viral trans.</td><td class="mono">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-<tr class="row-defer"><td class="mono">16</td><td>AIDO.Protein</td><td>PLM (16B)</td><td class="mono">16B</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+<tr class="row-defer"><td class="mono">15</td><td>AIDO.Protein</td><td>PLM (16B)</td><td class="mono">16B</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
 </table></div>
 <p class="card-note">Columns progress left → right by effort. Grouped headers describe the fine-tuning context; sub-headers name the method. AIDO.Protein deferred: 80 GB A100, minimal gains from scaling (EVEREST).</p></div>
 <div class="card"><div class="card-title">Strategies as threat actor tiers</div>
@@ -223,7 +222,7 @@ canvas{width:100%!important;height:380px!important;}
 <tr><td>Spearman ρ</td><td>Secondary</td><td>For comparability with EVEREST/ProteinGym</td></tr></table></div>
 <div class="card"><div class="card-title">Precomputed embeddings</div><p style="font-size:.8125rem;">One forward pass per PLM per dataset → save embeddings + scores. Converts Hsu et al. to CPU-only.</p>
 <table><tr><th>What</th><th>GPU jobs</th><th>Storage</th></tr>
-<tr><td>9 PLMs × 45 datasets × 2 (± homolog FT)</td><td class="mono">810</td><td class="mono">~20 GB</td></tr></table></div>
+<tr><td>8 PLMs × 45 datasets × 2 (± homolog FT)</td><td class="mono">720</td><td class="mono">~20 GB</td></tr></table></div>
 </div>
 
 <!-- TAB 3: VERDICTS -->
@@ -265,7 +264,6 @@ canvas{width:100%!important;height:380px!important;}
 <tr class="row-trad"><td>Traditional (1-6)</td><td class="mono">—</td><td><span class="tag tag-cpu">CPU</span></td><td class="dash">—</td><td class="dash">—</td></tr>
 <tr class="row-plm"><td>MSA Transformer</td><td class="mono">100M</td><td><span class="tag tag-gpu">~2 GB</span></td><td><span class="tag tag-gpu">~4 GB</span></td><td><span class="tag tag-gpu">~4 GB</span></td></tr>
 <tr class="row-plm"><td>ProSST</td><td class="mono">150M</td><td><span class="tag tag-gpu">~2 GB</span></td><td><span class="tag tag-gpu">~4 GB</span></td><td><span class="tag tag-gpu">~4 GB</span></td></tr>
-<tr class="row-plm"><td>SARITA</td><td class="mono">~100M</td><td><span class="tag tag-gpu">~2 GB</span></td><td><span class="tag tag-gpu">~4 GB</span></td><td><span class="tag tag-gpu">~4 GB</span></td></tr>
 <tr class="row-plm"><td>ESM-2</td><td class="mono">650M</td><td><span class="tag tag-gpu">~4 GB</span></td><td><span class="tag tag-gpu">~6-8 GB</span></td><td><span class="tag tag-gpu">~8 GB</span></td></tr>
 <tr class="row-plm"><td>Tranception</td><td class="mono">700M</td><td><span class="tag tag-gpu">~4 GB</span></td><td><span class="tag tag-gpu">~6-8 GB</span></td><td><span class="tag tag-gpu">~8 GB</span></td></tr>
 <tr class="row-plm"><td>TranceptEVE</td><td class="mono">700M+</td><td><span class="tag tag-gpu">~5 GB</span></td><td><span class="tag tag-gpu">~8 GB</span></td><td><span class="tag tag-gpu">~10 GB</span></td></tr>
@@ -279,7 +277,7 @@ canvas{width:100%!important;height:380px!important;}
 <tr><td>Zero-shot</td><td class="mono">1</td><td class="mono">1</td></tr>
 <tr><td>Hsu et al.</td><td class="mono">9 × subsampled splits × 3 seeds</td><td class="mono">165</td></tr>
 <tr class="total-row"><td></td><td class="mono">1 + 165</td><td class="mono">166</td></tr></table>
-<div class="section-title" style="color:var(--accent);">PLMs (7-15)</div>
+<div class="section-title" style="color:var(--accent);">PLMs (7-14)</div>
 <table><tr><th>Strategy</th><th>Formula</th><th>Runs</th></tr>
 <tr><td>Zero-shot</td><td class="mono">1</td><td class="mono">1</td></tr>
 <tr><td>Hsu et al.</td><td class="mono">165</td><td class="mono">165</td></tr>
@@ -290,25 +288,25 @@ canvas{width:100%!important;height:380px!important;}
 <tr><td>Homolog FT → LoRA</td><td class="mono">165</td><td class="mono">165</td></tr>
 <tr><td>Homolog FT → DPO</td><td class="mono">165</td><td class="mono">165</td></tr>
 <tr class="total-row"><td></td><td class="mono">2 + (165 × 6)</td><td class="mono">992</td></tr></table>
-<div class="section-title" style="color:var(--yellow);">AIDO.Protein</div>
+<div class="section-title" style="color:var(--yellow);">AIDO.Protein (15)</div>
 <table><tr><td>Zero-shot only</td><td class="mono">1</td><td class="mono">1</td></tr></table></div>
 <div class="card"><div class="card-title">Total runs</div>
 <table><tr><th>Group</th><th>#</th><th>Per model per dataset</th><th>× 45</th><th>× models</th><th>Subtotal</th></tr>
 <tr class="row-trad"><td>Traditional</td><td class="mono">6</td><td class="mono">166</td><td class="mono">7,470</td><td class="mono">× 6</td><td class="mono">44,820</td></tr>
-<tr class="row-plm"><td>PLMs</td><td class="mono">9</td><td class="mono">992</td><td class="mono">44,640</td><td class="mono">× 9</td><td class="mono">401,760</td></tr>
+<tr class="row-plm"><td>PLMs</td><td class="mono">8</td><td class="mono">992</td><td class="mono">44,640</td><td class="mono">× 8</td><td class="mono">357,120</td></tr>
 <tr class="row-defer"><td>AIDO.Protein</td><td class="mono">1</td><td class="mono">1</td><td class="mono">45</td><td class="mono">× 1</td><td class="mono">45</td></tr>
-<tr class="total-row"><td></td><td class="mono">16</td><td></td><td></td><td></td><td class="mono">446,625</td></tr></table></div>
+<tr class="total-row"><td></td><td class="mono">15</td><td></td><td></td><td></td><td class="mono">401,985</td></tr></table></div>
 <div class="card"><div class="card-title">Compute breakdown</div>
 <table><tr><th>Type</th><th>Runs</th><th>Time</th><th>Hours</th></tr>
-<tr><td><span class="tag tag-pre">Precompute</span></td><td class="mono">810</td><td class="mono">~10 min</td><td class="mono">~135</td></tr>
-<tr><td><span class="tag tag-cpu">CPU</span></td><td class="mono">~149,000</td><td class="mono">~1 min</td><td class="mono">~2,500</td></tr>
-<tr><td><span class="tag tag-gpu">GPU</span></td><td class="mono">~297,000</td><td class="mono">~10 min</td><td class="mono">~49,500</td></tr>
-<tr class="total-row"><td></td><td class="mono">~446,625</td><td></td><td class="mono">~52,100</td></tr></table></div>
+<tr><td><span class="tag tag-pre">Precompute</span></td><td class="mono">720</td><td class="mono">~10 min</td><td class="mono">~120</td></tr>
+<tr><td><span class="tag tag-cpu">CPU</span></td><td class="mono">~133,000</td><td class="mono">~1 min</td><td class="mono">~2,200</td></tr>
+<tr><td><span class="tag tag-gpu">GPU</span></td><td class="mono">~238,000</td><td class="mono">~10 min</td><td class="mono">~39,600</td></tr>
+<tr class="total-row"><td></td><td class="mono">~402,000</td><td></td><td class="mono">~41,900</td></tr></table></div>
 <div class="card"><div class="card-title">CHTC wall clock</div>
 <table><tr><th>GPU slots</th><th>GPU time</th><th>CPU</th></tr>
-<tr><td class="mono">250</td><td class="mono">~8.3 days</td><td>Hours</td></tr>
-<tr><td class="mono">500</td><td class="mono">~4.1 days</td><td>Hours</td></tr>
-<tr><td class="mono">1,000</td><td class="mono">~2.1 days</td><td>Hours</td></tr></table></div>
+<tr><td class="mono">250</td><td class="mono">~6.6 days</td><td>Hours</td></tr>
+<tr><td class="mono">500</td><td class="mono">~3.3 days</td><td>Hours</td></tr>
+<tr><td class="mono">1,000</td><td class="mono">~1.7 days</td><td>Hours</td></tr></table></div>
 </div>
 </div>
 
@@ -343,17 +341,33 @@ function getVerdict(bk,pk,sk){
   // Simulated verdicts - realistic distribution: mostly green, some yellow, rare red
   const key=pk+'_'+sk;
   const yellows={
-    'teve_h_dpo':['Flynn 2022','Haddox 2018','Lee 2018'],
-    'teve_h_lora':['Flynn 2022'],
-    'esm_h_dpo':['Flynn 2022','Haddox 2018'],
-    'esm_h_lora':['Haddox 2018'],
-    'trance_h_dpo':['Flynn 2022'],
-    'prost_h_dpo':['Lee 2018'],
-    'teve_dpo':['Flynn 2022'],
-    'esm_dpo':['Flynn 2022']
+    'teve_h_dpo':['Flynn 2022','Haddox 2018','Lee 2018','Cao 2022'],
+    'teve_h_lora':['Flynn 2022','Haddox 2018','Lee 2018'],
+    'teve_h_hsu':['Flynn 2022'],
+    'esm_h_dpo':['Flynn 2022','Haddox 2018','Cao 2022','Lee 2018'],
+    'esm_h_lora':['Haddox 2018','Flynn 2022','Cao 2022'],
+    'esm_h_hsu':['Flynn 2022'],
+    'trance_h_dpo':['Flynn 2022','Haddox 2018','Lee 2018'],
+    'trance_h_lora':['Flynn 2022','Haddox 2018'],
+    'trance_h_hsu':['Flynn 2022'],
+    'prost_h_dpo':['Lee 2018','Flynn 2022','Haddox 2018'],
+    'prost_h_lora':['Lee 2018','Flynn 2022'],
+    'msat_h_dpo':['Flynn 2022','Haddox 2018'],
+    'msat_h_lora':['Flynn 2022'],
+    'teve_dpo':['Flynn 2022','Haddox 2018'],
+    'teve_lora':['Flynn 2022'],
+    'esm_dpo':['Flynn 2022','Haddox 2018'],
+    'esm_lora':['Flynn 2022'],
+    'trance_dpo':['Flynn 2022'],
+    'prost_dpo':['Flynn 2022'],
+    'msat_dpo':['Flynn 2022']
   };
   const reds={
-    'teve_h_dpo':['Haddox 2018']
+    'teve_h_dpo':['Haddox 2018','Flynn 2022'],
+    'esm_h_dpo':['Haddox 2018'],
+    'trance_h_dpo':['Haddox 2018'],
+    'teve_h_lora':['Haddox 2018'],
+    'prost_h_dpo':['Haddox 2018']
   };
   if(reds[key]&&reds[key].includes(arguments[3]))return'r';
   if(yellows[key]&&yellows[key].includes(arguments[3]))return'y';
@@ -372,7 +386,7 @@ ctx.strokeStyle=bC;ctx.lineWidth=.5;for(let v=0;v<=.8;v+=.1){ctx.beginPath();ctx
 ctx.fillStyle=mC;ctx.font='13px IBM Plex Mono,monospace';ctx.textAlign='right';ctx.textBaseline='middle';for(let v=0;v<=.8;v+=.1)ctx.fillText(v.toFixed(1),pad.left-8,yP(v));
 ctx.textAlign='center';ctx.textBaseline='top';ctx.font='13px IBM Plex Mono,monospace';nL.forEach((l,i)=>ctx.fillText(l,xP(i),H-pad.bottom+8));
 ctx.font='14px IBM Plex Sans,sans-serif';ctx.fillText('Training variants (N)',pad.left+pW/2,H-12);
-ctx.save();ctx.translate(14,pad.top+pH/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.font='14px IBM Plex Sans,sans-serif';ctx.fillText('AUPRC',0,0);ctx.restore();
+ctx.save();ctx.translate(4,pad.top+pH/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.font='14px IBM Plex Sans,sans-serif';ctx.fillText('AUPRC',0,0);ctx.restore();
 ctx.strokeStyle=mC+'80';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(xP(cN),pad.top);ctx.lineTo(xP(cN),H-pad.bottom);ctx.stroke();ctx.setLineDash([]);
 function drawC(mk,skey,color,dash,lw){const pts=nL.map((_,i)=>gP(mk,skey,i,cT));if(!pts[0])return;ctx.fillStyle=color+'12';ctx.beginPath();pts.forEach((p,i)=>{const x=xP(i),y=yP(p.mean+p.std);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});for(let i=pts.length-1;i>=0;i--)ctx.lineTo(xP(i),yP(pts[i].mean-pts[i].std));ctx.closePath();ctx.fill();ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.setLineDash(dash);ctx.beginPath();pts.forEach((p,i)=>{const x=xP(i),y=yP(p.mean);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();ctx.setLineDash([]);pts.forEach((p,i)=>{ctx.fillStyle=color;ctx.beginPath();ctx.arc(xP(i),yP(p.mean),3.5,0,Math.PI*2);ctx.fill();});const hp=pts[cN];ctx.fillStyle=srf;ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(xP(cN),yP(hp.mean),6,0,Math.PI*2);ctx.fill();ctx.stroke();}
 function drawZS(mk,color,label){const v=D[mk].zs;ctx.strokeStyle=color;ctx.lineWidth=1;ctx.globalAlpha=.25;ctx.setLineDash([2,5]);ctx.beginPath();ctx.moveTo(pad.left,yP(v));ctx.lineTo(W-pad.right,yP(v));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;ctx.fillStyle=color;ctx.font='12px IBM Plex Mono,monospace';ctx.textAlign='right';ctx.fillText(label+' zero-shot: '+v.toFixed(2),W-pad.right,yP(v)-8);}
