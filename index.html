@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viral DMS Uplift Study</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f5f3;--surface:#fff;--border:#d6d6d2;--text:#1a1a1a;--muted:#71716b;--accent:#2563eb;--accent-light:#dbeafe;--green:#16a34a;--green-bg:#dcfce7;--yellow:#ca8a04;--yellow-bg:#fef9c3;--red:#dc2626;--red-bg:#fee2e2;--purple:#9333ea;--purple-bg:#f3e8ff;--trad:#64748b;--trad-bg:#f1f5f9;--plm:#2563eb;--plm-bg:#eff6ff;--r:5px;}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f0f11;--surface:#1a1a1e;--border:#2e2e33;--text:#e4e4e7;--muted:#8b8b91;--accent-light:#1e3a5f;--green-bg:#0a2618;--yellow-bg:#2a2410;--red-bg:#2a1010;--purple-bg:#1f102e;--trad-bg:#1e2028;--plm-bg:#101828;}}
+:root[data-theme="dark"]{--bg:#0f0f11;--surface:#1a1a1e;--border:#2e2e33;--text:#e4e4e7;--muted:#8b8b91;--accent-light:#1e3a5f;--green-bg:#0a2618;--yellow-bg:#2a2410;--red-bg:#2a1010;--purple-bg:#1f102e;--trad-bg:#1e2028;--plm-bg:#101828;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+.pw{max-width:1060px;margin:0 auto;padding:1.5rem;}
+header{margin-bottom:1.5rem;}header h1{font-size:1.375rem;font-weight:700;margin-bottom:.25rem;}header p{color:var(--muted);font-size:.8125rem;max-width:660px;}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1.5rem;overflow-x:auto;}
+.tab{padding:.625rem .875rem;font-size:.8125rem;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:all .15s;}
+.tab:hover{color:var(--text);}.tab.active{color:var(--text);border-bottom-color:var(--accent);}
+.tc{display:none;}.tc.active{display:block;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem;}
+.card-title{font-size:.875rem;font-weight:600;margin-bottom:.5rem;}
+.card-note{font-size:.75rem;color:var(--muted);margin-top:.75rem;line-height:1.5;}
+table{width:100%;border-collapse:collapse;font-size:.8125rem;}
+th{text-align:left;font-weight:600;color:var(--muted);padding:.5rem .5rem;border-bottom:1px solid var(--border);font-size:.75rem;}
+td{padding:.4rem .5rem;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+.mono{font-family:'IBM Plex Mono',monospace;font-size:.75rem;}
+.check{color:var(--green);font-weight:600;}.dash{color:var(--border);}
+.row-trad{background:var(--trad-bg);}.row-plm{background:var(--plm-bg);}.row-defer{background:var(--yellow-bg);}
+.tag{display:inline-block;padding:.125rem .4rem;border-radius:3px;font-size:.6875rem;font-weight:500;}
+.tag-cpu{background:var(--green-bg);color:var(--green);}.tag-gpu{background:var(--purple-bg);color:var(--purple);}.tag-pre{background:var(--accent-light);color:var(--accent);}
+.total-row td{font-weight:600;border-top:2px solid var(--border);}
+.section-title{font-size:.8125rem;font-weight:600;color:var(--muted);margin-bottom:.375rem;margin-top:1rem;}
+.gh{text-align:center;font-weight:600;font-size:.6875rem;padding:.5rem .25rem;letter-spacing:.02em;}
+.gh-none{color:var(--trad);border-bottom:2px solid var(--trad);}.gh-hom{color:var(--purple);border-bottom:2px solid var(--purple);}.gh-sup{color:var(--green);border-bottom:2px solid var(--green);}.gh-both{color:var(--red);border-bottom:2px solid var(--red);}
+select{width:100%;padding:.45rem .5rem;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);color:var(--text);font-family:inherit;font-size:.8125rem;cursor:pointer;}
+input[type="range"]{-webkit-appearance:none;width:100%;height:5px;background:var(--border);border-radius:3px;outline:none;cursor:pointer;margin-top:.25rem;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--accent);border-radius:50%;cursor:pointer;}
+.ticks{display:flex;justify-content:space-between;font-size:.625rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-top:.2rem;}
+.ctrl-label{font-size:.75rem;font-weight:600;color:var(--muted);margin-bottom:.4rem;}
+.ctrl-sub{font-size:.6875rem;color:var(--muted);margin-top:.25rem;}
+.ctrl-val{font-family:'IBM Plex Mono',monospace;font-size:1.375rem;font-weight:500;margin-bottom:.125rem;}.ctrl-val span{font-size:.8125rem;color:var(--muted);font-weight:400;}
+canvas{width:100%!important;height:380px!important;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+.g2r{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.75rem;}
+@media(max-width:680px){.g2,.g2r{grid-template-columns:1fr;}}
+.ro4{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.75rem;text-align:center;align-items:center;}
+@media(max-width:600px){.ro4{grid-template-columns:1fr 1fr;}}
+.ro-l{font-size:.6875rem;color:var(--muted);font-weight:500;}.ro-v{font-family:'IBM Plex Mono',monospace;font-size:1.25rem;font-weight:500;}.ro-s{font-size:.6875rem;color:var(--muted);}
+.badge{display:inline-flex;align-items:center;gap:.375rem;padding:.375rem .75rem;border-radius:20px;font-size:.8125rem;font-weight:600;}
+.badge-green{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green);}
+.badge-yellow{background:var(--yellow-bg);color:var(--yellow);border:1.5px solid var(--yellow);}
+.badge-red{background:var(--red-bg);color:var(--red);border:1.5px solid var(--red);}
+.win-tbl td,.win-tbl th{padding:.3rem .5rem;font-size:.8125rem;text-align:center;}
+.win-bar{height:8px;border-radius:4px;background:var(--border);position:relative;min-width:80px;}
+.win-fill{height:100%;border-radius:4px;position:absolute;left:0;top:0;transition:width .3s;}
+.err-line{font-size:.75rem;color:var(--muted);margin-top:.625rem;text-align:center;}
+.hm-wrap{margin-top:.5rem;}.hm-row{display:flex;gap:2px;margin-bottom:2px;align-items:center;}
+.hm-lbl{width:40px;text-align:right;padding-right:5px;font-size:.6875rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;flex-shrink:0;}
+.hm-cells{display:grid;gap:2px;flex:1;}
+.hm-cell{aspect-ratio:1.8;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.6875rem;font-weight:500;cursor:pointer;}
+.hm-cell.sel{outline:2px solid var(--text);outline-offset:1px;}
+.hm-xlbls{display:flex;gap:2px;padding-left:44px;margin-bottom:2px;}
+.hm-xlbls span{flex:1;text-align:center;font-size:.6875rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.hm-axis{font-size:.75rem;color:var(--muted);font-weight:500;text-align:center;margin-top:.375rem;}
+.vd{display:inline-block;width:18px;height:18px;border-radius:50%;text-align:center;line-height:18px;font-size:10px;}
+.vd-g{background:var(--green-bg);border:1.5px solid var(--green);}.vd-y{background:var(--yellow-bg);border:1.5px solid var(--yellow);}.vd-r{background:var(--red-bg);border:1.5px solid var(--red);}
+.flag-item{display:flex;align-items:center;gap:.5rem;padding:.375rem 0;font-size:.8125rem;}
+</style>
+</head>
+<body>
+<div class="pw">
+<header><h1>Viral DMS Uplift Study</h1><p>Measuring the performance delta between traditional computational tools and current-generation AI models on viral deep mutational scanning datasets.</p></header>
+<div class="tabs">
+<button class="tab active" onclick="sTab(0)">Interactive Demo</button>
+<button class="tab" onclick="sTab(1)">Models & Strategies</button>
+<button class="tab" onclick="sTab(2)">Evaluation Framework</button>
+<button class="tab" onclick="sTab(3)">Verdicts</button>
+<button class="tab" onclick="sTab(4)">Compute</button>
+</div>
+
+<!-- TAB 0 -->
+<div class="tc active" id="t0">
+<div class="card">
+<div class="g2">
+  <div>
+    <div class="ctrl-label">Baseline (traditional)</div>
+    <select id="selB" onchange="dd()">
+      <option value="best">Best traditional (auto)</option>
+      <option value="pssm">PSSM</option>
+      <option value="evmut">EVMutation</option>
+      <option value="gemme">GEMME</option>
+      <option value="rsalor">RSALOR</option>
+      <option value="si">Site Independent</option>
+      <option value="rosetta">Rosetta ∆∆G</option>
+    </select>
+    <div class="ctrl-sub" id="baseNote">Auto-selects strongest traditional model across all splits</div>
+  </div>
+  <div>
+    <div class="ctrl-label">Compare against (PLM)</div>
+    <select id="selP" onchange="dd()">
+      <optgroup label="Base PLMs">
+        <option value="esm">ESM-2 (650M)</option>
+        <option value="prost">ProSST (150M)</option>
+        <option value="trance">Tranception (700M)</option>
+        <option value="msat">MSA Transformer (100M)</option>
+        <option value="teve">TranceptEVE (700M+)</option>
+      </optgroup>
+      <optgroup label="+ Viral Homolog Fine-Tuning">
+        <option value="esm_h">ESM-2 + Homolog FT</option>
+        <option value="prost_h">ProSST + Homolog FT</option>
+        <option value="trance_h">Tranception + Homolog FT</option>
+        <option value="msat_h">MSA Transformer + Homolog FT</option>
+        <option value="teve_h">TranceptEVE + Homolog FT</option>
+      </optgroup>
+    </select>
+    <div style="margin-top:.5rem;">
+      <div class="ctrl-label">PLM supervised strategy</div>
+      <select id="selS" onchange="dd()">
+        <option value="hsu">Hsu et al. — dashed</option>
+        <option value="lora" selected>LoRA — solid</option>
+        <option value="dpo">DPO / ConFit — dotted</option>
+      </select>
+    </div>
+  </div>
+</div>
+<div class="g2r">
+  <div><div class="ctrl-label">Training variants (N)</div><div class="ctrl-val" id="dNd">50 <span>variants</span></div><input type="range" id="dNs" min="0" max="8" value="2" step="1" oninput="dd()"><div class="ticks"><span>0</span><span>10</span><span>50</span><span>100</span><span>200</span><span>500</span><span>1k</span><span>2k</span><span>Full</span></div></div>
+  <div><div class="ctrl-label">Test fraction (post-hoc)</div><div class="ctrl-val" id="dTd">10% <span>of held-out</span></div><input type="range" id="dTs" min="0" max="4" value="1" step="1" oninput="dd()"><div class="ticks"><span>5%</span><span>10%</span><span>15%</span><span>20%</span><span>25%</span></div></div>
+</div>
+</div>
+<div class="card"><div class="card-title">Learning curve</div><canvas id="dC"></canvas><p class="card-note">Simulated data. Grey = baseline (Hsu et al.). Blue = PLM + strategy. Faint horizontal = pre-trained scores. Error bands = ±1 SD across splits and seeds.</p></div>
+<div class="card">
+<div class="card-title">Uplift at selected point</div>
+<div class="ro4">
+  <div><div class="ro-l">Baseline (Hsu et al.)</div><div class="ro-v" id="roB">—</div></div>
+  <div><div class="ro-l">PLM (selected strategy)</div><div class="ro-v" id="roM">—</div></div>
+  <div><div class="ro-l">PLM wins by ≥20%</div><div class="ro-v" id="roW">—</div><div class="ro-s">of matched splits</div></div>
+  <div id="badgeWrap"></div>
+</div>
+<div class="card-title" style="margin-top:1rem;">Win frequency across matched splits</div>
+<table class="win-tbl">
+<tr><th>PLM wins by ≥</th><th>% of splits</th><th style="min-width:100px;"></th></tr>
+<tr><td class="mono">5%</td><td class="mono" id="w5">—</td><td><div class="win-bar"><div class="win-fill" id="wb5" style="background:var(--green)"></div></div></td></tr>
+<tr><td class="mono">10%</td><td class="mono" id="w10">—</td><td><div class="win-bar"><div class="win-fill" id="wb10" style="background:var(--green)"></div></div></td></tr>
+<tr><td class="mono">20%</td><td class="mono" id="w20">—</td><td><div class="win-bar"><div class="win-fill" id="wb20" style="background:var(--yellow)"></div></div></td></tr>
+<tr><td class="mono">30%</td><td class="mono" id="w30">—</td><td><div class="win-bar"><div class="win-fill" id="wb30" style="background:var(--yellow)"></div></div></td></tr>
+<tr><td class="mono">40%</td><td class="mono" id="w40">—</td><td><div class="win-bar"><div class="win-fill" id="wb40" style="background:var(--red)"></div></div></td></tr>
+<tr><td class="mono">50%</td><td class="mono" id="w50">—</td><td><div class="win-bar"><div class="win-fill" id="wb50" style="background:var(--red)"></div></div></td></tr>
+</table>
+<div class="err-line" id="errLine"></div>
+</div>
+<div class="card"><div class="card-title">Win rate heatmap — ≥20% improvement frequency</div><div style="font-size:.75rem;color:var(--muted);margin-bottom:.5rem;">Click any cell to update above.</div><div class="hm-wrap" id="hmap"></div><div class="hm-axis">Training variants (N)</div></div>
+</div>
+
+<!-- TAB 1 -->
+<div class="tc" id="t1">
+<div class="card"><div class="card-title">Models × Strategies</div>
+<div style="overflow-x:auto;">
+<table>
+<tr><th rowspan="2">#</th><th rowspan="2">Model</th><th rowspan="2">Type</th><th rowspan="2">Params</th>
+<th class="gh gh-none">No fine-tuning</th><th class="gh gh-hom">Homolog FT only</th><th colspan="3" class="gh gh-sup">Supervised on DMS</th><th colspan="3" class="gh gh-both">Homolog FT → Supervised</th></tr>
+<tr><th>Zero-shot</th><th>Zero-shot</th><th>Hsu et al.</th><th>LoRA</th><th>DPO</th><th>Hsu et al.</th><th>LoRA</th><th>DPO</th></tr>
+<tr class="row-trad"><td class="mono">1</td><td>PSSM</td><td>Traditional</td><td class="mono">—</td><td class="check">✓</td><td class="dash">—</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+<tr class="row-trad"><td class="mono">2</td><td>Site Independent</td><td>Traditional</td><td class="mono">—</td><td class="check">✓</td><td class="dash">—</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+<tr class="row-trad"><td class="mono">3</td><td>RSALOR</td><td>Traditional</td><td class="mono">—</td><td class="check">✓</td><td class="dash">—</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+<tr class="row-trad"><td class="mono">4</td><td>GEMME</td><td>Traditional</td><td class="mono">—</td><td class="check">✓</td><td class="dash">—</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+<tr class="row-trad"><td class="mono">5</td><td>EVMutation</td><td>Traditional</td><td class="mono">—</td><td class="check">✓</td><td class="dash">—</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+<tr class="row-trad"><td class="mono">6</td><td>Rosetta ∆∆G</td><td>Biophysics</td><td class="mono">—</td><td class="check">✓</td><td class="dash">—</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+<tr class="row-plm"><td class="mono">7</td><td>ESM-2</td><td>PLM (seq)</td><td class="mono">650M</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+<tr class="row-plm"><td class="mono">8</td><td>MSA Transformer</td><td>PLM (MSA)</td><td class="mono">100M</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+<tr class="row-plm"><td class="mono">9</td><td>Tranception</td><td>PLM (AR)</td><td class="mono">700M</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+<tr class="row-plm"><td class="mono">10</td><td>TranceptEVE</td><td>Hybrid</td><td class="mono">700M+</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+<tr class="row-plm"><td class="mono">11</td><td>EVEscape</td><td>Hybrid</td><td class="mono">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+<tr class="row-plm"><td class="mono">12</td><td>ProSST</td><td>PLM (struct)</td><td class="mono">150M</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+<tr class="row-plm"><td class="mono">13</td><td>ProGen3</td><td>PLM (AR)</td><td class="mono">~1B</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+<tr class="row-plm"><td class="mono">14</td><td>PoET-2</td><td>PLM (retrieval)</td><td class="mono">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+<tr class="row-plm"><td class="mono">15</td><td>SARITA</td><td>Viral trans.</td><td class="mono">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+<tr class="row-defer"><td class="mono">16</td><td>AIDO.Protein</td><td>PLM (16B)</td><td class="mono">16B</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+</table></div>
+<p class="card-note">Columns progress left → right by effort. Grouped headers describe the fine-tuning context; sub-headers name the method. AIDO.Protein deferred: 80 GB A100, minimal gains from scaling (EVEREST).</p></div>
+<div class="card"><div class="card-title">Strategies as threat actor tiers</div>
+<table><tr><th>Strategy</th><th>Threat actor</th><th>Skill</th></tr>
+<tr><td>Zero-shot (pre-trained)</td><td>No actor needed</td><td>Download, run inference</td></tr>
+<tr><td>Hsu et al.</td><td>Anyone with a browser</td><td>Zero-shot score + seq identity → linear model</td></tr>
+<tr><td>LoRA</td><td>Expert ML practitioner</td><td>Standard fine-tuning</td></tr>
+<tr><td>DPO / ConFit</td><td>Expert, cutting-edge lit</td><td>Preference training on fitness pairs</td></tr>
+<tr><td>Viral homolog FT → any</td><td>Expert with domain knowledge</td><td>Curate homologs, continue pre-training</td></tr></table></div>
+</div>
+
+<!-- TAB 2 -->
+<div class="tc" id="t2">
+<div class="card"><div class="card-title">Datasets</div><p style="font-size:.8125rem;margin-bottom:.75rem;">45 viral DMS datasets from EVEREST. 11 viral families, 40 WHO-priority RNA viruses, 340K+ mutations.</p>
+<table><tr><th>Virus</th><th>Datasets</th><th>Properties</th></tr>
+<tr><td>SARS-CoV-2</td><td class="mono">~12</td><td>Binding, immune escape, replication</td></tr>
+<tr><td>Influenza A</td><td class="mono">~8</td><td>Binding, immune escape, stability</td></tr>
+<tr><td>HIV-1</td><td class="mono">~6</td><td>Replication, drug resistance</td></tr>
+<tr><td>Other</td><td class="mono">~19</td><td>Various</td></tr></table></div>
+<div class="card"><div class="card-title">Low-N evaluation with subsampled random splits</div><p style="font-size:.8125rem;margin-bottom:.75rem;">30% held out as test. Training from remaining 70%.</p>
+<table><tr><th>Training %</th><th>Splits</th><th>× Seeds</th><th>Runs / model / strategy / dataset</th></tr>
+<tr><td class="mono">5%</td><td class="mono">10</td><td class="mono">3</td><td class="mono">30</td></tr>
+<tr><td class="mono">10%</td><td class="mono">10</td><td class="mono">3</td><td class="mono">30</td></tr>
+<tr><td class="mono">15%</td><td class="mono">8</td><td class="mono">3</td><td class="mono">24</td></tr>
+<tr><td class="mono">20%</td><td class="mono">8</td><td class="mono">3</td><td class="mono">24</td></tr>
+<tr><td class="mono">30%</td><td class="mono">5</td><td class="mono">3</td><td class="mono">15</td></tr>
+<tr><td class="mono">40%</td><td class="mono">5</td><td class="mono">3</td><td class="mono">15</td></tr>
+<tr><td class="mono">50%</td><td class="mono">3</td><td class="mono">3</td><td class="mono">9</td></tr>
+<tr><td class="mono">60%</td><td class="mono">3</td><td class="mono">3</td><td class="mono">9</td></tr>
+<tr><td class="mono">70%</td><td class="mono">3</td><td class="mono">3</td><td class="mono">9</td></tr>
+<tr class="total-row"><td></td><td></td><td></td><td class="mono">165</td></tr></table></div>
+<div class="card"><div class="card-title">Verdict logic</div>
+<table>
+<tr><td><span class="vd vd-g"></span></td><td><strong>Never wins</strong></td><td>PLM wins by ≥20% in <10% of matched splits</td></tr>
+<tr><td><span class="vd vd-y"></span></td><td><strong>Inconsistent</strong></td><td>PLM wins by ≥20% in 10–50% of splits</td></tr>
+<tr><td><span class="vd vd-r"></span></td><td><strong>Flagged for review</strong></td><td>PLM wins by ≥20% in >50% of splits — too frequent to dismiss</td></tr>
+</table>
+<p class="card-note">No verdict claims uplift. Green = nothing. Yellow = probably noise. Red = a human needs to look. Thresholds (20% magnitude, 50% frequency) to be refined with biosecurity collaborators.</p></div>
+<div class="card"><div class="card-title">Metrics</div>
+<table><tr><th>Metric</th><th>Priority</th><th>Notes</th></tr>
+<tr><td>AUPRC</td><td>Primary</td><td>Threshold per dataset</td></tr>
+<tr><td>Precision @ threshold</td><td>Primary</td><td>Of predicted top variants, how many real</td></tr>
+<tr><td>Recall @ threshold</td><td>Primary</td><td>Of real top variants, how many found</td></tr>
+<tr><td>Spearman ρ</td><td>Secondary</td><td>For comparability with EVEREST/ProteinGym</td></tr></table></div>
+<div class="card"><div class="card-title">Precomputed embeddings</div><p style="font-size:.8125rem;">One forward pass per PLM per dataset → save embeddings + scores. Converts Hsu et al. to CPU-only.</p>
+<table><tr><th>What</th><th>GPU jobs</th><th>Storage</th></tr>
+<tr><td>9 PLMs × 45 datasets × 2 (± homolog FT)</td><td class="mono">810</td><td class="mono">~20 GB</td></tr></table></div>
+</div>
+
+<!-- TAB 3: VERDICTS -->
+<div class="tc" id="t3">
+<div class="card">
+<div class="card-title">Flagged for review</div>
+<p style="font-size:.8125rem;margin-bottom:.75rem;">Across all simulated model-dataset pairs, the following were flagged (PLM wins by ≥20% in >25% of splits):</p>
+<div id="flagList"></div>
+<p class="card-note" id="flagSummary"></p>
+</div>
+<div class="card">
+<div class="card-title">Verdict matrix</div>
+<div style="margin-bottom:.75rem;">
+  <div class="ctrl-label">Select PLM to view</div>
+  <select id="vModel" onchange="buildVerdicts()" style="max-width:300px;">
+    <option value="esm">ESM-2</option>
+    <option value="prost">ProSST</option>
+    <option value="trance">Tranception</option>
+    <option value="msat">MSA Transformer</option>
+    <option value="teve">TranceptEVE</option>
+    <option value="esm_h">ESM-2 + Homolog FT</option>
+    <option value="prost_h">ProSST + Homolog FT</option>
+    <option value="trance_h">Tranception + Homolog FT</option>
+    <option value="msat_h">MSA Transformer + Homolog FT</option>
+    <option value="teve_h">TranceptEVE + Homolog FT</option>
+  </select>
+</div>
+<div style="overflow-x:auto;">
+<table id="vTable"></table>
+</div>
+<p class="card-note">Simulated verdicts. In production, 45 datasets. Each cell: % of matched splits where PLM wins by ≥20%. Verdict thresholds: <10% = 🟢, 10–50% = 🟡, >50% = 🔴.</p>
+</div>
+</div>
+
+<!-- TAB 4: COMPUTE -->
+<div class="tc" id="t4">
+<div class="card"><div class="card-title">GPU memory per model</div>
+<table><tr><th>Model</th><th>Params</th><th>Inference</th><th>LoRA</th><th>DPO</th></tr>
+<tr class="row-trad"><td>Traditional (1-6)</td><td class="mono">—</td><td><span class="tag tag-cpu">CPU</span></td><td class="dash">—</td><td class="dash">—</td></tr>
+<tr class="row-plm"><td>MSA Transformer</td><td class="mono">100M</td><td><span class="tag tag-gpu">~2 GB</span></td><td><span class="tag tag-gpu">~4 GB</span></td><td><span class="tag tag-gpu">~4 GB</span></td></tr>
+<tr class="row-plm"><td>ProSST</td><td class="mono">150M</td><td><span class="tag tag-gpu">~2 GB</span></td><td><span class="tag tag-gpu">~4 GB</span></td><td><span class="tag tag-gpu">~4 GB</span></td></tr>
+<tr class="row-plm"><td>SARITA</td><td class="mono">~100M</td><td><span class="tag tag-gpu">~2 GB</span></td><td><span class="tag tag-gpu">~4 GB</span></td><td><span class="tag tag-gpu">~4 GB</span></td></tr>
+<tr class="row-plm"><td>ESM-2</td><td class="mono">650M</td><td><span class="tag tag-gpu">~4 GB</span></td><td><span class="tag tag-gpu">~6-8 GB</span></td><td><span class="tag tag-gpu">~8 GB</span></td></tr>
+<tr class="row-plm"><td>Tranception</td><td class="mono">700M</td><td><span class="tag tag-gpu">~4 GB</span></td><td><span class="tag tag-gpu">~6-8 GB</span></td><td><span class="tag tag-gpu">~8 GB</span></td></tr>
+<tr class="row-plm"><td>TranceptEVE</td><td class="mono">700M+</td><td><span class="tag tag-gpu">~5 GB</span></td><td><span class="tag tag-gpu">~8 GB</span></td><td><span class="tag tag-gpu">~10 GB</span></td></tr>
+<tr class="row-plm"><td>EVEscape</td><td class="mono">—</td><td><span class="tag tag-gpu">~4 GB</span></td><td><span class="tag tag-gpu">~6-8 GB</span></td><td><span class="tag tag-gpu">~8 GB</span></td></tr>
+<tr class="row-plm"><td>ProGen3</td><td class="mono">~1B</td><td><span class="tag tag-gpu">~6 GB</span></td><td><span class="tag tag-gpu">~10 GB</span></td><td><span class="tag tag-gpu">~12 GB</span></td></tr>
+<tr class="row-plm"><td>PoET-2</td><td class="mono">—</td><td><span class="tag tag-gpu">~4 GB</span></td><td><span class="tag tag-gpu">~8 GB</span></td><td><span class="tag tag-gpu">~8 GB</span></td></tr>
+<tr class="row-defer"><td>AIDO.Protein</td><td class="mono">16B</td><td><span class="tag tag-gpu">~40 GB</span></td><td class="dash">Deferred</td><td class="dash">Deferred</td></tr></table></div>
+<div class="card"><div class="card-title">Runs per model per dataset</div>
+<div class="section-title" style="color:var(--trad);">Traditional (1-6)</div>
+<table><tr><th>Strategy</th><th>Formula</th><th>Runs</th></tr>
+<tr><td>Zero-shot</td><td class="mono">1</td><td class="mono">1</td></tr>
+<tr><td>Hsu et al.</td><td class="mono">9 × subsampled splits × 3 seeds</td><td class="mono">165</td></tr>
+<tr class="total-row"><td></td><td class="mono">1 + 165</td><td class="mono">166</td></tr></table>
+<div class="section-title" style="color:var(--accent);">PLMs (7-15)</div>
+<table><tr><th>Strategy</th><th>Formula</th><th>Runs</th></tr>
+<tr><td>Zero-shot</td><td class="mono">1</td><td class="mono">1</td></tr>
+<tr><td>Hsu et al.</td><td class="mono">165</td><td class="mono">165</td></tr>
+<tr><td>LoRA</td><td class="mono">165</td><td class="mono">165</td></tr>
+<tr><td>DPO</td><td class="mono">165</td><td class="mono">165</td></tr>
+<tr><td>Homolog FT → Zero-shot</td><td class="mono">1</td><td class="mono">1</td></tr>
+<tr><td>Homolog FT → Hsu et al.</td><td class="mono">165</td><td class="mono">165</td></tr>
+<tr><td>Homolog FT → LoRA</td><td class="mono">165</td><td class="mono">165</td></tr>
+<tr><td>Homolog FT → DPO</td><td class="mono">165</td><td class="mono">165</td></tr>
+<tr class="total-row"><td></td><td class="mono">2 + (165 × 6)</td><td class="mono">992</td></tr></table>
+<div class="section-title" style="color:var(--yellow);">AIDO.Protein</div>
+<table><tr><td>Zero-shot only</td><td class="mono">1</td><td class="mono">1</td></tr></table></div>
+<div class="card"><div class="card-title">Total runs</div>
+<table><tr><th>Group</th><th>#</th><th>Per model per dataset</th><th>× 45</th><th>× models</th><th>Subtotal</th></tr>
+<tr class="row-trad"><td>Traditional</td><td class="mono">6</td><td class="mono">166</td><td class="mono">7,470</td><td class="mono">× 6</td><td class="mono">44,820</td></tr>
+<tr class="row-plm"><td>PLMs</td><td class="mono">9</td><td class="mono">992</td><td class="mono">44,640</td><td class="mono">× 9</td><td class="mono">401,760</td></tr>
+<tr class="row-defer"><td>AIDO.Protein</td><td class="mono">1</td><td class="mono">1</td><td class="mono">45</td><td class="mono">× 1</td><td class="mono">45</td></tr>
+<tr class="total-row"><td></td><td class="mono">16</td><td></td><td></td><td></td><td class="mono">446,625</td></tr></table></div>
+<div class="card"><div class="card-title">Compute breakdown</div>
+<table><tr><th>Type</th><th>Runs</th><th>Time</th><th>Hours</th></tr>
+<tr><td><span class="tag tag-pre">Precompute</span></td><td class="mono">810</td><td class="mono">~10 min</td><td class="mono">~135</td></tr>
+<tr><td><span class="tag tag-cpu">CPU</span></td><td class="mono">~149,000</td><td class="mono">~1 min</td><td class="mono">~2,500</td></tr>
+<tr><td><span class="tag tag-gpu">GPU</span></td><td class="mono">~297,000</td><td class="mono">~10 min</td><td class="mono">~49,500</td></tr>
+<tr class="total-row"><td></td><td class="mono">~446,625</td><td></td><td class="mono">~52,100</td></tr></table></div>
+<div class="card"><div class="card-title">CHTC wall clock</div>
+<table><tr><th>GPU slots</th><th>GPU time</th><th>CPU</th></tr>
+<tr><td class="mono">250</td><td class="mono">~8.3 days</td><td>Hours</td></tr>
+<tr><td class="mono">500</td><td class="mono">~4.1 days</td><td>Hours</td></tr>
+<tr><td class="mono">1,000</td><td class="mono">~2.1 days</td><td>Hours</td></tr></table></div>
+</div>
+</div>
+
+<script>
+function sTab(i){document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',j===i));document.querySelectorAll('.tc').forEach((t,j)=>t.classList.toggle('active',j===i));if(i===0)dd();if(i===3)buildVerdicts();}
+const nL=['0','10','50','100','200','500','1k','2k','Full'],nLD=['0','10','50','100','200','500','1,000','2,000','Full (~3k)'],tL=['5%','10%','15%','20%','25%'];
+const D={
+  pssm:{zs:.32,hsu:[.32,.34,.38,.41,.44,.47,.49,.50,.50],bs:[.04,.05,.04,.04,.03,.03,.02,.02,.02]},
+  evmut:{zs:.31,hsu:[.31,.33,.37,.40,.43,.46,.48,.49,.49],bs:[.04,.05,.04,.04,.03,.03,.02,.02,.02]},
+  gemme:{zs:.33,hsu:[.33,.35,.39,.42,.45,.48,.50,.51,.51],bs:[.04,.05,.04,.04,.03,.03,.02,.02,.02]},
+  rsalor:{zs:.30,hsu:[.30,.32,.36,.39,.42,.45,.47,.48,.48],bs:[.05,.05,.04,.04,.03,.03,.02,.02,.02]},
+  si:{zs:.27,hsu:[.27,.29,.33,.36,.39,.42,.44,.45,.45],bs:[.05,.06,.05,.04,.04,.03,.03,.02,.02]},
+  rosetta:{zs:.25,hsu:[.25,.27,.31,.34,.37,.40,.42,.43,.43],bs:[.05,.06,.05,.05,.04,.03,.03,.02,.02]},
+  esm:{zs:.28,hsu:[.28,.31,.36,.40,.44,.48,.51,.52,.53],lora:[.28,.30,.38,.44,.49,.54,.57,.59,.60],dpo:[.28,.30,.39,.45,.50,.55,.58,.60,.62],bs:[.05,.06,.05,.05,.04,.03,.03,.02,.02]},
+  prost:{zs:.30,hsu:[.30,.33,.37,.42,.45,.49,.52,.53,.54],lora:[.30,.32,.40,.46,.50,.55,.58,.59,.61],dpo:[.30,.32,.41,.47,.51,.56,.59,.61,.63],bs:[.05,.06,.05,.04,.04,.03,.03,.02,.02]},
+  trance:{zs:.31,hsu:[.31,.34,.38,.42,.46,.50,.53,.54,.55],lora:[.31,.33,.41,.47,.52,.56,.59,.61,.62],dpo:[.31,.33,.42,.48,.53,.57,.60,.62,.64],bs:[.04,.06,.05,.04,.04,.03,.03,.02,.02]},
+  msat:{zs:.29,hsu:[.29,.32,.36,.40,.44,.48,.51,.52,.53],lora:[.29,.31,.39,.45,.50,.55,.58,.59,.61],dpo:[.29,.31,.40,.46,.51,.56,.59,.61,.62],bs:[.05,.06,.05,.05,.04,.03,.03,.02,.02]},
+  teve:{zs:.35,hsu:[.35,.37,.41,.45,.49,.53,.56,.57,.58],lora:[.35,.37,.44,.50,.55,.60,.63,.65,.66],dpo:[.35,.37,.45,.51,.56,.61,.64,.66,.68],bs:[.04,.05,.04,.04,.03,.03,.02,.02,.02]},
+  esm_h:{zs:.33,hsu:[.33,.36,.42,.47,.52,.56,.59,.60,.61],lora:[.33,.37,.46,.53,.58,.63,.66,.68,.69],dpo:[.33,.37,.47,.54,.59,.64,.67,.69,.71],bs:[.05,.06,.05,.04,.04,.03,.03,.02,.02]},
+  prost_h:{zs:.34,hsu:[.34,.37,.43,.48,.53,.57,.60,.61,.62],lora:[.34,.38,.47,.54,.59,.64,.67,.69,.70],dpo:[.34,.38,.48,.55,.60,.65,.68,.70,.72],bs:[.05,.06,.05,.04,.03,.03,.02,.02,.02]},
+  trance_h:{zs:.35,hsu:[.35,.38,.44,.49,.54,.58,.61,.62,.63],lora:[.35,.39,.48,.55,.60,.65,.68,.70,.71],dpo:[.35,.39,.49,.56,.61,.66,.69,.71,.73],bs:[.04,.05,.05,.04,.03,.03,.02,.02,.02]},
+  msat_h:{zs:.33,hsu:[.33,.36,.41,.46,.51,.55,.58,.59,.60],lora:[.33,.37,.45,.52,.57,.62,.65,.67,.68],dpo:[.33,.37,.46,.53,.58,.63,.66,.68,.70],bs:[.05,.06,.05,.04,.04,.03,.03,.02,.02]},
+  teve_h:{zs:.38,hsu:[.38,.41,.46,.51,.55,.59,.62,.63,.64],lora:[.38,.42,.50,.57,.62,.67,.70,.72,.73],dpo:[.38,.42,.51,.58,.63,.68,.71,.73,.75],bs:[.04,.05,.04,.03,.03,.02,.02,.02,.02]}
+};
+const tradK=['pssm','evmut','gemme','rsalor','si','rosetta'];
+const tradNames={pssm:'PSSM',evmut:'EVMutation',gemme:'GEMME',rsalor:'RSALOR',si:'Site Indep.',rosetta:'Rosetta'};
+let cN=2,cT=1;
+function bestT(ni,ti){let bk='pssm',bv=0;tradK.forEach(k=>{const v=D[k].hsu[ni]-(ti*.004);if(v>bv){bv=v;bk=k;}});return bk;}
+function gP(mk,sk,ni,ti){const m=D[mk];if(!m)return null;const v=sk==='hsu'?m.hsu:(m[sk]||null);if(!v)return null;return{mean:Math.max(0,v[ni]-ti*.004),std:m.bs[ni]*(1+(2-ti)*.25)};}
+function gWins(bk,pk,sk,ni,ti){const b=gP(bk,'hsu',ni,ti),p=gP(pk,sk,ni,ti);if(!b||!p)return[0,0,0,0,0,0];const d=p.mean-b.mean,cs=Math.sqrt(b.std*b.std+p.std*p.std);return[.05,.1,.2,.3,.4,.5].map(t=>{const need=b.mean*t;if(d<=0)return 0;return Math.min(100,Math.max(0,Math.round(50+(d-need)/Math.max(cs,.001)*28)));});}
+function getVerdict(bk,pk,sk){
+  // Simulated verdicts - realistic distribution: mostly green, some yellow, rare red
+  const key=pk+'_'+sk;
+  const yellows={
+    'teve_h_dpo':['Flynn 2022','Haddox 2018','Lee 2018'],
+    'teve_h_lora':['Flynn 2022'],
+    'esm_h_dpo':['Flynn 2022','Haddox 2018'],
+    'esm_h_lora':['Haddox 2018'],
+    'trance_h_dpo':['Flynn 2022'],
+    'prost_h_dpo':['Lee 2018'],
+    'teve_dpo':['Flynn 2022'],
+    'esm_dpo':['Flynn 2022']
+  };
+  const reds={
+    'teve_h_dpo':['Haddox 2018']
+  };
+  if(reds[key]&&reds[key].includes(arguments[3]))return'r';
+  if(yellows[key]&&yellows[key].includes(arguments[3]))return'y';
+  return'g';
+}
+
+function bHM(){const w=document.getElementById('hmap');w.innerHTML='';const xl=document.createElement('div');xl.className='hm-xlbls';nL.forEach(l=>{const s=document.createElement('span');s.textContent=l;xl.appendChild(s);});w.appendChild(xl);tL.forEach((tl,ti)=>{const row=document.createElement('div');row.className='hm-row';const lb=document.createElement('div');lb.className='hm-lbl';lb.textContent=tl;row.appendChild(lb);const cs=document.createElement('div');cs.className='hm-cells';cs.style.gridTemplateColumns=`repeat(${nL.length},1fr)`;nL.forEach((_,ni)=>{const c=document.createElement('div');c.className='hm-cell';c.dataset.n=ni;c.dataset.t=ti;c.addEventListener('click',()=>{cN=ni;cT=ti;document.getElementById('dNs').value=ni;document.getElementById('dTs').value=ti;dd();});cs.appendChild(c);});row.appendChild(cs);w.appendChild(row);});}
+function uHM(){const bSel=document.getElementById('selB').value,pk=document.getElementById('selP').value,sk=document.getElementById('selS').value;document.querySelectorAll('.hm-cell').forEach(c=>{const ni=+c.dataset.n,ti=+c.dataset.t;const bk=bSel==='best'?bestT(ni,ti):bSel;const w=gWins(bk,pk,sk,ni,ti)[2];c.textContent=w+'%';const dk=window.matchMedia('(prefers-color-scheme:dark)').matches;if(w<10){c.style.background=dk?'rgba(220,252,231,.12)':'#dcfce7';c.style.color=dk?'#86efac':'#166534';}else if(w<50){c.style.background=dk?'rgba(254,249,195,.12)':'#fef9c3';c.style.color=dk?'#fde047':'#854d0e';}else{c.style.background=dk?'rgba(254,202,202,.12)':'#fecaca';c.style.color=dk?'#fca5a5':'#991b1b';}c.classList.toggle('sel',ni===cN&&ti===cT);});}
+
+function dChart(){const cv=document.getElementById('dC'),ctx=cv.getContext('2d');const r=cv.parentElement.getBoundingClientRect(),dpr=window.devicePixelRatio||1;const W=r.width-40,H=380;cv.width=W*dpr;cv.height=H*dpr;ctx.scale(dpr,dpr);cv.style.width=W+'px';cv.style.height=H+'px';
+const pad={top:16,right:16,bottom:48,left:54},pW=W-pad.left-pad.right,pH=H-pad.top-pad.bottom;const yMin=0,yMax=.85;const xP=i=>pad.left+(i/(nL.length-1))*pW,yP=v=>pad.top+pH-((v-yMin)/(yMax-yMin))*pH;
+const cs=getComputedStyle(document.documentElement),bC=cs.getPropertyValue('--border').trim(),mC=cs.getPropertyValue('--muted').trim(),srf=cs.getPropertyValue('--surface').trim();
+const bSel=document.getElementById('selB').value,pk=document.getElementById('selP').value,sk=document.getElementById('selS').value;const bk=bSel==='best'?bestT(cN,cT):bSel;
+ctx.clearRect(0,0,W,H);
+ctx.strokeStyle=bC;ctx.lineWidth=.5;for(let v=0;v<=.8;v+=.1){ctx.beginPath();ctx.moveTo(pad.left,yP(v));ctx.lineTo(W-pad.right,yP(v));ctx.stroke();}
+ctx.fillStyle=mC;ctx.font='13px IBM Plex Mono,monospace';ctx.textAlign='right';ctx.textBaseline='middle';for(let v=0;v<=.8;v+=.1)ctx.fillText(v.toFixed(1),pad.left-8,yP(v));
+ctx.textAlign='center';ctx.textBaseline='top';ctx.font='13px IBM Plex Mono,monospace';nL.forEach((l,i)=>ctx.fillText(l,xP(i),H-pad.bottom+8));
+ctx.font='14px IBM Plex Sans,sans-serif';ctx.fillText('Training variants (N)',pad.left+pW/2,H-12);
+ctx.save();ctx.translate(14,pad.top+pH/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.font='14px IBM Plex Sans,sans-serif';ctx.fillText('AUPRC',0,0);ctx.restore();
+ctx.strokeStyle=mC+'80';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(xP(cN),pad.top);ctx.lineTo(xP(cN),H-pad.bottom);ctx.stroke();ctx.setLineDash([]);
+function drawC(mk,skey,color,dash,lw){const pts=nL.map((_,i)=>gP(mk,skey,i,cT));if(!pts[0])return;ctx.fillStyle=color+'12';ctx.beginPath();pts.forEach((p,i)=>{const x=xP(i),y=yP(p.mean+p.std);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});for(let i=pts.length-1;i>=0;i--)ctx.lineTo(xP(i),yP(pts[i].mean-pts[i].std));ctx.closePath();ctx.fill();ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.setLineDash(dash);ctx.beginPath();pts.forEach((p,i)=>{const x=xP(i),y=yP(p.mean);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();ctx.setLineDash([]);pts.forEach((p,i)=>{ctx.fillStyle=color;ctx.beginPath();ctx.arc(xP(i),yP(p.mean),3.5,0,Math.PI*2);ctx.fill();});const hp=pts[cN];ctx.fillStyle=srf;ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(xP(cN),yP(hp.mean),6,0,Math.PI*2);ctx.fill();ctx.stroke();}
+function drawZS(mk,color,label){const v=D[mk].zs;ctx.strokeStyle=color;ctx.lineWidth=1;ctx.globalAlpha=.25;ctx.setLineDash([2,5]);ctx.beginPath();ctx.moveTo(pad.left,yP(v));ctx.lineTo(W-pad.right,yP(v));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;ctx.fillStyle=color;ctx.font='12px IBM Plex Mono,monospace';ctx.textAlign='right';ctx.fillText(label+' zero-shot: '+v.toFixed(2),W-pad.right,yP(v)-8);}
+const bName=bSel==='best'?'Best trad. ('+tradNames[bk]+')':document.getElementById('selB').selectedOptions[0].text;
+drawZS(bk,'#64748b',bName);drawC(bk,'hsu','#64748b',[6,4],2);
+drawZS(pk,'#2563eb',document.getElementById('selP').selectedOptions[0].text);
+drawC(pk,sk,'#2563eb',sk==='hsu'?[6,4]:sk==='dpo'?[2,4]:[],2.5);
+let ly=pad.top+8;ctx.textAlign='left';ctx.textBaseline='middle';ctx.font='13px IBM Plex Sans,sans-serif';
+ctx.fillStyle='#64748b';ctx.beginPath();ctx.arc(pad.left+12,ly,4.5,0,Math.PI*2);ctx.fill();ctx.fillText(bName+' — Hsu et al.',pad.left+24,ly);ly+=22;
+ctx.fillStyle='#2563eb';ctx.beginPath();ctx.arc(pad.left+12,ly,4.5,0,Math.PI*2);ctx.fill();const sn=sk==='hsu'?'Hsu et al.':sk==='lora'?'LoRA':'DPO';ctx.fillText(document.getElementById('selP').selectedOptions[0].text+' — '+sn,pad.left+24,ly);ly+=20;
+}
+
+function uRO(){const bSel=document.getElementById('selB').value,pk=document.getElementById('selP').value,sk=document.getElementById('selS').value;const bk=bSel==='best'?bestT(cN,cT):bSel;
+const b=gP(bk,'hsu',cN,cT),p=gP(pk,sk,cN,cT);if(!b||!p)return;
+document.getElementById('roB').textContent=b.mean.toFixed(3);document.getElementById('roM').textContent=p.mean.toFixed(3);
+const wins=gWins(bk,pk,sk,cN,cT);const w20=wins[2];
+document.getElementById('roW').textContent=w20+'%';
+const bw=document.getElementById('badgeWrap');
+if(w20<10)bw.innerHTML='<div class="badge badge-green">🟢 Never wins</div>';
+else if(w20<50)bw.innerHTML='<div class="badge badge-yellow">🟡 Inconsistent</div>';
+else bw.innerHTML='<div class="badge badge-red">🔴 Flagged for review</div>';
+['w5','w10','w20','w30','w40','w50'].forEach((id,i)=>document.getElementById(id).textContent=wins[i]+'%');
+['wb5','wb10','wb20','wb30','wb40','wb50'].forEach((id,i)=>document.getElementById(id).style.width=wins[i]+'%');
+document.getElementById('errLine').textContent='Uncertainty: ±'+b.std.toFixed(3)+' baseline · ±'+p.std.toFixed(3)+' PLM (from splits + seeds) · test subsampling varies with fraction';}
+
+function dd(){cN=+document.getElementById('dNs').value;cT=+document.getElementById('dTs').value;document.getElementById('dNd').innerHTML=nLD[cN]+' <span>variants</span>';document.getElementById('dTd').innerHTML=tL[cT]+' <span>of held-out</span>';
+const bSel=document.getElementById('selB').value;
+if(bSel==='best'){const bk=bestT(cN,cT);document.getElementById('baseNote').textContent='Currently: '+tradNames[bk];}else{document.getElementById('baseNote').textContent='';}
+dChart();uRO();uHM();}
+
+// Verdicts tab
+const vDS=[
+{name:'Bloom 2022',virus:'SARS-CoV-2',prop:'Binding'},
+{name:'Flynn 2022',virus:'SARS-CoV-2',prop:'Immune escape'},
+{name:'Starr 2020',virus:'SARS-CoV-2',prop:'ACE2 binding'},
+{name:'Cao 2022',virus:'SARS-CoV-2',prop:'Antibody escape'},
+{name:'Lee 2018',virus:'Influenza A',prop:'HA binding'},
+{name:'Doud 2016',virus:'Influenza A',prop:'Replication'},
+{name:'Wu 2020',virus:'Influenza A',prop:'Stability'},
+{name:'Fernandes 2016',virus:'HIV-1',prop:'Replication'},
+{name:'Haddox 2018',virus:'HIV-1',prop:'Immune escape'},
+{name:'Lassa NP',virus:'Lassa',prop:'Replication'},
+{name:'Nipah F',virus:'Nipah',prop:'Fusion'},
+{name:'Dengue E',virus:'Dengue',prop:'Entry'},
+{name:'Ebola GP',virus:'Ebola',prop:'Entry'}
+];
+const plmKeys=['esm','prost','trance','msat','teve','esm_h','prost_h','trance_h','msat_h','teve_h'];
+const strats=['hsu','lora','dpo'];
+const stratLabels=['Hsu et al.','LoRA','DPO'];
+
+const bestPerDS={
+  'Bloom 2022':'evmut','Flynn 2022':'gemme','Starr 2020':'pssm','Cao 2022':'evmut',
+  'Lee 2018':'pssm','Doud 2016':'gemme','Wu 2020':'rsalor',
+  'Fernandes 2016':'pssm','Haddox 2018':'evmut',
+  'Lassa NP':'gemme','Nipah F':'pssm','Dengue E':'rsalor','Ebola GP':'gemme'
+};
+
+function buildVerdicts(){
+  const sel=document.getElementById('vModel').value;
+  const flags=[];
+  plmKeys.forEach(pk=>{
+    const pName=document.querySelector('#vModel option[value="'+pk+'"]')?.text||pk;
+    strats.forEach((sk,si)=>{
+      vDS.forEach(ds=>{
+        const bk=bestPerDS[ds.name]||'pssm';
+        const v=getVerdict(bk,pk,sk,ds.name);
+        if(v==='r')flags.push({ds:ds.name,virus:ds.virus,prop:ds.prop,model:pName,strat:stratLabels[si]});
+      });
+    });
+  });
+  const fl=document.getElementById('flagList');
+  if(flags.length===0){fl.innerHTML='<p style="font-size:.875rem;color:var(--green);font-weight:500;">No model-dataset pairs flagged across any strategy. 🟢</p>';}
+  else{fl.innerHTML=flags.slice(0,10).map(f=>`<div class="flag-item"><span class="vd vd-r"></span><span class="mono">${f.ds}</span> (${f.virus}, ${f.prop}) — ${f.model}, ${f.strat}</div>`).join('');
+  if(flags.length>10)fl.innerHTML+=`<p style="font-size:.75rem;color:var(--muted);">+ ${flags.length-10} more</p>`;}
+  document.getElementById('flagSummary').textContent=flags.length+' of '+(plmKeys.length*strats.length*vDS.length)+' model-dataset-strategy combinations flagged.';
+
+  // Build matrix for selected model
+  const t=document.getElementById('vTable');
+  let h='<tr><th>Dataset</th><th>Virus</th><th>Property</th><th>Best trad.</th>';
+  strats.forEach((_,i)=>h+='<th>'+stratLabels[i]+'</th>');
+  h+='</tr>';
+  vDS.forEach(ds=>{
+    const bk=bestPerDS[ds.name]||'pssm';
+    h+='<tr><td class="mono">'+ds.name+'</td><td>'+ds.virus+'</td><td>'+ds.prop+'</td><td class="mono">'+tradNames[bk]+'</td>';
+    strats.forEach(sk=>{
+      const v=getVerdict(bk,sel,sk,ds.name);
+      const cls=v==='g'?'vd-g':v==='y'?'vd-y':'vd-r';
+      h+='<td style="text-align:center"><span class="vd '+cls+'"></span></td>';
+    });
+    h+='</tr>';
+  });
+  t.innerHTML=h;
+}
+
+bHM();window.addEventListener('resize',()=>{if(document.getElementById('t0').classList.contains('active'))dd();});
+dd();buildVerdicts();
+</script>
+</body>
+</html>
